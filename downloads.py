@@ -42,4 +42,4 @@ for a in container:
     name = file_path.split('/')[-1]
     file_path = 'https://www.dian.gov.co'+file_path
     print('Downloading: {}'.format(name))
-    urllib.request.urlretrieve(file_path, '/home/davidcparrar/Documents/Resources/exportaciones'+ name)
+    urllib.request.urlretrieve(file_path, '/home/davidcparrar/Documents/Resources/exportaciones/'+ name)
