@@ -8,6 +8,7 @@ from zipfile import ZipFile
 ###########################################
 
 PATH_DATA = '/home/davidcparrar/Documents/Resources/exportaciones'
+PATH_DATA_OUT = '/home/davidcparrar/Documents/Resources/exportaciones_cacao/'
 columns_file = ['Año Gravable', 'Numero Periodo', 'Razon Social', 'Razón Social Destinatario',
                 'Ciudad en el Exterior', 'Nombre Pais Destino','Codigo Pais Destino',
                 'Valor Total Agregado Nacional USD','Número Total de Bultos',
@@ -40,7 +41,7 @@ def get_importaciones(partida='18'):
 
 def read_files_exportaciones(exportaciones,partida='18'):
     try:
-        df = pd.read_excel(exportaciones,usecols=columns_file,nrows=10)
+        df = pd.read_excel(exportaciones,usecols=columns_file)
     except Exception as e:
         print('Could not read columns')
         df = pd.read_excel(exportaciones,nrows=10)
@@ -53,10 +54,17 @@ def read_files_exportaciones(exportaciones,partida='18'):
         return df
 
 if __name__ == '__main__':
-    for exp in exportaciones:
+    data = []
+    i = 0
+    for exp in exportaciones[:2]:
         print(exp)
         try:
             df =  read_files_exportaciones(exp)
+            df.to_csv(PATH_DATA_OUT+str(i)+'.csv')
+            data.append(df)
             print(df.columns)
         except Exception as e:
             print('Could not process file: ', e)
+        i=i+1
+    data = pd.concat(data,ignore_index=True)
+    data.to_csv(PATH_DATA_OUT+str('total.csv'))
