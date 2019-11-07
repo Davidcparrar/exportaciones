@@ -8,6 +8,11 @@ from zipfile import ZipFile
 ###########################################
 
 PATH_DATA = '/home/davidcparrar/Documents/Resources/exportaciones'
+columns_file = ['Año Gravable', 'Numero Periodo', 'Razon Social', 'Razón Social Destinatario',
+                'Ciudad en el Exterior', 'Nombre Pais Destino','Codigo Pais Destino',
+                'Valor Total Agregado Nacional USD','Número Total de Bultos',
+                'Total Peso Bruto Kgs.','Codigo Subpartida','Valor FOB USD Subpartida',
+                'Peso neto Kgs.', 'Peso bruto Kgs.']
 
 todos = glob.glob(PATH_DATA+"/*")
 importaciones = glob.glob(PATH_DATA+"/*500*")
@@ -33,8 +38,25 @@ def get_importaciones(partida='18'):
     df = dd.read_csv(importaciones)
     print(df.head(10))
 
+def read_files_exportaciones(exportaciones,partida='18'):
+    try:
+        df = pd.read_excel(exportaciones,usecols=columns_file,nrows=10)
+    except Exception as e:
+        print('Could not read columns')
+        df = pd.read_excel(exportaciones,nrows=10)
+
+    try:
+        df['Codigo Subpartida'] = df['Codigo Subpartida'].apply(lambda x: str(x))
+        return df[df['Codigo Subpartida'].str.startswith(partida)]
+    except Exception as e:
+        print('No column Codigo Subpartida')
+        return df
+
 if __name__ == '__main__':
-    # for imp in importaciones:
-    #     df = read_zip_file(imp,'18')
-    #     print(df)
-    print(importaciones)
+    for exp in exportaciones:
+        print(exp)
+        try:
+            df =  read_files_exportaciones(exp)
+            print(df.columns)
+        except Exception as e:
+            print('Could not process file: ', e)
